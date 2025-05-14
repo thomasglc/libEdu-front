@@ -47,7 +47,9 @@ onMounted(() => {
                     <h2 class="card-title">{{ course.title }}</h2>
                     <p class="text-base-content/70">{{ course.description }}</p>
                     <div class="card-actions justify-end mt-4">
-                        <button class="btn btn-primary">Accéder au cours</button>
+                        <router-link :to="{ name: 'course', params: { documentId: course.documentId }}" class="btn btn-primary">
+                            Accéder au cours
+                        </router-link>
                     </div>
                 </div>
             </div>
