@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/LoginView.vue'
 import DashboardView from '../views/DashboardView.vue'
+import MainLayout from '../layouts/MainLayout.vue'
 import { useAuthStore } from '../stores/auth'
 
 const router = createRouter({
@@ -9,19 +10,25 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: HomeView
+      component: MainLayout,
+      children: [
+        {
+          path: '',
+          name: 'home',
+          component: HomeView
+        },
+        {
+          path: 'dashboard',
+          name: 'dashboard',
+          component: DashboardView,
+          meta: { requiresAuth: true }
+        }
+      ]
     },
     {
       path: '/login',
       name: 'login',
       component: LoginView
-    },
-    {
-      path: '/dashboard',
-      name: 'dashboard',
-      component: DashboardView,
-      meta: { requiresAuth: true }
     }
   ]
 })
