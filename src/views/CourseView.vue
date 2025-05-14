@@ -55,7 +55,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="min-h-screen">
+    <div class="min-h-screen bg-base-100">
         <div v-if="error" class="alert alert-error m-4">
             {{ error }}
         </div>
@@ -66,23 +66,23 @@ onMounted(() => {
 
         <div v-else-if="course" class="flex">
             <!-- Sidebar Navigation -->
-            <aside class="w-64 h-[calc(100vh-4rem)] overflow-y-auto fixed left-0 top-16 p-4 bg-base-200 border-r border-base-300">
+            <aside class="w-56 h-[calc(100vh-4rem)] overflow-y-auto fixed left-0 top-16 p-3 bg-base-100 border-r-2 border-r-primary border-opacity-30">
                 <div class="sticky top-0">
-                    <h2 class="text-lg font-bold mb-4">{{ course.title }}</h2>
+                    <h2 class="text-lg font-bold mb-3 text-base-content">{{ course.title }}</h2>
                     <nav>
-                        <div v-for="chapter in sortedChapters" :key="chapter.id" class="mb-4">
-                            <h3 class="font-medium text-base mb-2 text-base-content/70">
+                        <div v-for="chapter in sortedChapters" :key="chapter.id" class="mb-3">
+                            <h3 class="font-medium text-base mb-1 text-base-content/70">
                                 {{ chapter.title }}
                             </h3>
-                            <ul class="space-y-1">
+                            <ul class="space-y-0.5">
                                 <li v-for="subChapter in chapter.sub_chapters.sort((a, b) => a.order - b.order)"
                                     :key="subChapter.id">
                                     <button 
                                         @click="selectSubChapter(subChapter)"
-                                        class="w-full text-left px-2 py-1 rounded hover:bg-base-300 transition-colors"
+                                        class="w-full text-left px-2 py-1 rounded hover:bg-base-300 transition-colors cursor-pointer text-sm"
                                         :class="{ 
-                                            'bg-primary/10 text-primary': activeSubChapter?.id === subChapter.id,
-                                            'text-base-content/70': activeSubChapter?.id !== subChapter.id
+                                            'bg-primary/10 text-primary font-medium': activeSubChapter?.id === subChapter.id,
+                                            'text-base-content/70 hover:text-base-content': activeSubChapter?.id !== subChapter.id
                                         }">
                                         {{ subChapter.title }}
                                     </button>
@@ -94,13 +94,15 @@ onMounted(() => {
             </aside>
 
             <!-- Main Content -->
-            <main class="flex-1 ml-64 p-8 max-w-4xl mx-auto">
-                <div v-if="activeSubChapter" class="prose max-w-none">
-                    <h1>{{ activeSubChapter.title }}</h1>
-                    <div v-html="formattedContent"></div>
-                </div>
-                <div v-else class="text-center text-base-content/70 mt-12">
-                    <p>Sélectionnez un chapitre pour commencer</p>
+            <main class="flex-1 ml-56 min-h-screen bg-base-200">
+                <div class="max-w-4xl mx-auto p-8">
+                    <div v-if="activeSubChapter" class="prose max-w-none">
+                        <h1>{{ activeSubChapter.title }}</h1>
+                        <div v-html="formattedContent"></div>
+                    </div>
+                    <div v-else class="text-center text-base-content/70 mt-12">
+                        <p>Sélectionnez un chapitre pour commencer</p>
+                    </div>
                 </div>
             </main>
         </div>
@@ -120,4 +122,6 @@ onMounted(() => {
     padding: 0.2rem 0.4rem;
     border-radius: 0.25rem;
 }
+
+
 </style> 
