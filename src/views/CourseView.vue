@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 import { CourseService } from '../services/courseService'
 import type { CourseDetail, Chapter, SubChapter } from '../types/course'
 import { marked } from 'marked'
+import CourseNavigation from '../components/CourseNavigation.vue'
 
 const route = useRoute()
 const course = ref<CourseDetail | null>(null)
@@ -11,10 +12,6 @@ const isLoading = ref(true)
 const error = ref('')
 const activeSubChapter = ref<SubChapter | null>(null)
 
-const sortedChapters = computed(() => {
-    if (!course.value) return []
-    return [...course.value.chapters].sort((a, b) => a.order - b.order)
-})
 
 const fetchCourse = async () => {
     try {
@@ -40,7 +37,7 @@ const fetchCourse = async () => {
     }
 }
 
-const selectSubChapter = (subChapter: SubChapter) => {
+const handleSubChapterSelect = (subChapter: SubChapter) => {
     activeSubChapter.value = subChapter
 }
 
@@ -65,36 +62,14 @@ onMounted(() => {
         </div>
 
         <div v-else-if="course" class="flex">
-            <!-- Sidebar Navigation -->
-            <aside class="w-56 h-[calc(100vh-4rem)] overflow-y-auto fixed left-0 top-16 p-3 bg-base-100 border-r-2 border-r-primary border-opacity-30">
-                <div class="sticky top-0">
-                    <h2 class="text-lg font-bold mb-3 text-base-content">{{ course.title }}</h2>
-                    <nav>
-                        <div v-for="chapter in sortedChapters" :key="chapter.id" class="mb-3">
-                            <h3 class="font-medium text-base mb-1 text-base-content/70">
-                                {{ chapter.title }}
-                            </h3>
-                            <ul class="space-y-0.5">
-                                <li v-for="subChapter in chapter.sub_chapters.sort((a, b) => a.order - b.order)"
-                                    :key="subChapter.id">
-                                    <button 
-                                        @click="selectSubChapter(subChapter)"
-                                        class="w-full text-left px-2 py-1 rounded hover:bg-base-300 transition-colors cursor-pointer text-sm"
-                                        :class="{ 
-                                            'bg-primary/10 text-primary font-medium': activeSubChapter?.id === subChapter.id,
-                                            'text-base-content/70 hover:text-base-content': activeSubChapter?.id !== subChapter.id
-                                        }">
-                                        {{ subChapter.title }}
-                                    </button>
-                                </li>
-                            </ul>
-                        </div>
-                    </nav>
-                </div>
-            </aside>
+            <CourseNavigation 
+                :course="course"
+                :active-sub-chapter="activeSubChapter"
+                @select-sub-chapter="handleSubChapterSelect"
+            />
 
             <!-- Main Content -->
-            <main class="flex-1 ml-56 min-h-screen bg-base-200">
+            <main class="flex-1 ml-[32rem] min-h-screen bg-base-200">
                 <div class="max-w-4xl mx-auto p-8">
                     <div v-if="activeSubChapter" class="prose max-w-none">
                         <h1>{{ activeSubChapter.title }}</h1>
