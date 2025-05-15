@@ -5,13 +5,15 @@ import { CourseService } from '../services/courseService'
 import type { CourseDetail, Chapter, SubChapter } from '../types/course'
 import { marked } from 'marked'
 import CourseNavigation from '../components/CourseNavigation.vue'
+import CompletionButton from '../components/CompletionButton.vue'
+import confetti from 'canvas-confetti'
 
 const route = useRoute()
 const course = ref<CourseDetail | null>(null)
 const isLoading = ref(true)
 const error = ref('')
 const activeSubChapter = ref<SubChapter | null>(null)
-
+const isCompleted = ref(false)
 
 const fetchCourse = async () => {
     try {
@@ -19,8 +21,7 @@ const fetchCourse = async () => {
         const documentId = route.params.documentId as string
         const response = await CourseService.getCourseByDocumentId(documentId)
         course.value = response.data
-        
-        // Sélectionner le premier sous-chapitre par défaut
+
         if (course.value.chapters.length > 0) {
             const firstChapter = [...course.value.chapters]
                 .sort((a, b) => a.order - b.order)[0]
@@ -46,6 +47,11 @@ const formattedContent = computed(() => {
     return marked(activeSubChapter.value.description)
 })
 
+const handleCourseComplete = () => {
+    // Ici nous ajouterons plus tard la logique pour sauvegarder l'état dans l'API
+    console.log('Cours marqué comme terminé !')
+}
+
 onMounted(() => {
     fetchCourse()
 })
@@ -61,19 +67,23 @@ onMounted(() => {
             <span class="loading loading-spinner loading-lg"></span>
         </div>
 
-        <div v-else-if="course" class="flex">
-            <CourseNavigation 
-                :course="course"
-                :active-sub-chapter="activeSubChapter"
-                @select-sub-chapter="handleSubChapterSelect"
-            />
+        <div v-else-if="course">
+            <CourseNavigation :course="course" :active-sub-chapter="activeSubChapter"
+                @select-sub-chapter="handleSubChapterSelect" />
 
-            <!-- Main Content -->
-            <main class="flex-1 ml-[32rem] min-h-screen bg-base-200">
+            <main class="flex-1 ml-[16rem] min-h-screen bg-base-200">
                 <div class="max-w-4xl mx-auto p-8">
                     <div v-if="activeSubChapter" class="prose max-w-none">
                         <h1>{{ activeSubChapter.title }}</h1>
                         <div v-html="formattedContent"></div>
+                        
+                        <div class="mt-12 flex justify-center">
+                            <CompletionButton 
+                                @complete="handleCourseComplete"
+                                label="Marquer ce cours comme terminé"
+                                completedLabel="Cours terminé !"
+                            />
+                        </div>
                     </div>
                     <div v-else class="text-center text-base-content/70 mt-12">
                         <p>Sélectionnez un chapitre pour commencer</p>
@@ -98,5 +108,19 @@ onMounted(() => {
     border-radius: 0.25rem;
 }
 
+@keyframes success-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(var(--success), 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(var(--success), 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(var(--success), 0);
+    }
+}
 
-</style> 
+.btn-success {
+    animation: success-pulse 2s infinite;
+}
+</style>

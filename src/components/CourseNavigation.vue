@@ -22,7 +22,7 @@ const handleSubChapterSelect = (subChapter: SubChapter) => {
 </script>
 
 <template>
-  <aside class="w-[32rem] h-[calc(100vh-4rem)] overflow-y-auto fixed left-0 top-16 p-6 bg-base-100 border-r-2 border-r-primary border-opacity-30">
+  <aside class="w-[24rem] h-[calc(100vh-4rem)] overflow-y-auto fixed left-0 top-16 p-6 bg-base-100 border-r-2 border-r-primary border-opacity-30">
     <div class="sticky top-0">
       <h2 class="text-xl font-bold mb-6 text-base-content">
         {{ course.title }}
